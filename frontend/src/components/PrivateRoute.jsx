@@ -10,7 +10,6 @@ export default function PrivateRoute({ children }) {
   }
 
   if (!user) {
-    // Redirect to login page, saving the current location
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
