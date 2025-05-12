@@ -1,11 +1,9 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const app = express();
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 
-// Import routes
 const department = require("./routes/department");
 const post = require("./routes/post");
 const staff = require("./routes/staff");
@@ -13,13 +11,22 @@ const user = require("./routes/user");
 const recruitment = require("./routes/recruitment");
 const auth = require("./routes/auth");
 
-require("./config/db");
+const app = express();
 
-app.use(cors());
+const corsOptions = {
+  origin: 'http://localhost:5173', // Your frontend origin
+  credentials: true, // Required when using withCredentials
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());
 
 const JWT_SECRET = "brunorwanda4@gmail.com1234><mukamana*&%#jnnfcjmmej)*242";
+
+require("./config/db");
 
 // Auth middleware
 const authMiddleware = (req, res, next) => {
