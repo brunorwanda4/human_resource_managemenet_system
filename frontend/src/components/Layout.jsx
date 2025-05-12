@@ -3,8 +3,13 @@ import { useAuth } from '../context/AuthContext';
 import { HomeIcon, BuildingOfficeIcon, UserGroupIcon, BriefcaseIcon, DocumentCheckIcon, UserIcon } from '@heroicons/react/24/outline';
 
 export default function Layout() {
-  const { user, logout } = useAuth();
+  const auth = useAuth();
+  const user = auth?.user; // Safe access to user
+  const logout = auth?.logout;
 
+   if (!auth) {
+    return null; // Or a loading spinner
+  }
   if (!user) return null;
 
   const navigation = [
