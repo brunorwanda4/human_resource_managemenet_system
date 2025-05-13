@@ -1,25 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import api from '../services/api';
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import api from "../services/api";
 
 export default function StaffForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    postId: '',
-    depId: '',
-    firstName: '',
-    lastName: '',
-    gender: 'Male',
-    DOB: '',
-    email: '',
-    phone: '',
-    address: ''
+    postId: "",
+    depId: "",
+    firstName: "",
+    lastName: "",
+    gender: "Male",
+    DOB: "",
+    email: "",
+    phone: "",
+    address: "",
   });
   const [departments, setDepartments] = useState([]);
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     fetchDepartments();
@@ -31,7 +31,7 @@ export default function StaffForm() {
 
   const fetchDepartments = async () => {
     try {
-      const response = await api.get('/department');
+      const response = await api.get("/department");
       setDepartments(response.data);
     } catch (error) {
       console.error(error);
@@ -40,7 +40,7 @@ export default function StaffForm() {
 
   const fetchPosts = async () => {
     try {
-      const response = await api.get('/post');
+      const response = await api.get("/post");
       setPosts(response.data);
     } catch (error) {
       console.error(error);
@@ -56,36 +56,36 @@ export default function StaffForm() {
         firstName: response.data.firstName,
         lastName: response.data.lastName,
         gender: response.data.gender,
-        DOB: response.data.DOB.split('T')[0],
+        DOB: response.data.DOB.split("T")[0],
         email: response.data.email,
         phone: response.data.phone,
-        address: response.data.address
+        address: response.data.address,
       });
     } catch (error) {
-      setError('Failed to fetch staff');
+      setError("Failed to fetch staff");
       console.error(error);
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       if (id) {
         await api.put(`/staff/${id}`, formData);
       } else {
-        await api.post('/staff', formData);
+        await api.post("/staff", formData);
       }
-      navigate('/staff');
+      navigate("/staff");
     } catch (error) {
-      setError(error.response?.data?.message || 'Something went wrong');
+      setError(error.response?.data?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -94,12 +94,22 @@ export default function StaffForm() {
   return (
     <div className="card bg-base-100 shadow">
       <div className="card-body">
-        <h2 className="card-title">{id ? 'Edit' : 'Add'} Staff</h2>
-        
+        <h2 className="card-title">{id ? "Edit" : "Add"} Staff</h2>
+
         {error && (
           <div className="alert alert-error">
-            <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="stroke-current shrink-0 h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <span>{error}</span>
           </div>
@@ -107,7 +117,7 @@ export default function StaffForm() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="form-control">
+            <div className="form-control flex flex-col space-y-2">
               <label className="label">
                 <span className="label-text">First Name</span>
               </label>
@@ -121,7 +131,7 @@ export default function StaffForm() {
               />
             </div>
 
-            <div className="form-control">
+            <div className="form-control flex flex-col space-y-2">
               <label className="label">
                 <span className="label-text">Last Name</span>
               </label>
@@ -137,7 +147,7 @@ export default function StaffForm() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="form-control">
+            <div className="form-control flex flex-col space-y-2">
               <label className="label">
                 <span className="label-text">Gender</span>
               </label>
@@ -153,7 +163,7 @@ export default function StaffForm() {
               </select>
             </div>
 
-            <div className="form-control">
+            <div className="form-control flex flex-col space-y-2">
               <label className="label">
                 <span className="label-text">Date of Birth</span>
               </label>
@@ -169,7 +179,7 @@ export default function StaffForm() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="form-control">
+            <div className="form-control flex flex-col space-y-2">
               <label className="label">
                 <span className="label-text">Department</span>
               </label>
@@ -181,13 +191,15 @@ export default function StaffForm() {
                 required
               >
                 <option value="">Select Department</option>
-                {departments.map(dept => (
-                  <option key={dept.depId} value={dept.depId}>{dept.depName}</option>
+                {departments.map((dept) => (
+                  <option key={dept.depId} value={dept.depId}>
+                    {dept.depName}
+                  </option>
                 ))}
               </select>
             </div>
 
-            <div className="form-control">
+            <div className="form-control flex flex-col space-y-2">
               <label className="label">
                 <span className="label-text">Position</span>
               </label>
@@ -199,14 +211,16 @@ export default function StaffForm() {
                 required
               >
                 <option value="">Select Position</option>
-                {posts.map(post => (
-                  <option key={post.postId} value={post.postId}>{post.postTitle}</option>
+                {posts.map((post) => (
+                  <option key={post.postId} value={post.postId}>
+                    {post.postTitle}
+                  </option>
                 ))}
               </select>
             </div>
           </div>
 
-          <div className="form-control">
+          <div className="form-control flex flex-col space-y-2">
             <label className="label">
               <span className="label-text">Email</span>
             </label>
@@ -220,7 +234,7 @@ export default function StaffForm() {
             />
           </div>
 
-          <div className="form-control">
+          <div className="form-control flex flex-col space-y-2">
             <label className="label">
               <span className="label-text">Phone</span>
             </label>
@@ -234,7 +248,7 @@ export default function StaffForm() {
             />
           </div>
 
-          <div className="form-control">
+          <div className="form-control flex flex-col space-y-2">
             <label className="label">
               <span className="label-text">Address</span>
             </label>
@@ -251,7 +265,7 @@ export default function StaffForm() {
             <button
               type="button"
               className="btn btn-ghost"
-              onClick={() => navigate('/staff')}
+              onClick={() => navigate("/staff")}
             >
               Cancel
             </button>
@@ -262,7 +276,11 @@ export default function StaffForm() {
             >
               {loading ? (
                 <span className="loading loading-spinner"></span>
-              ) : id ? 'Update' : 'Save'}
+              ) : id ? (
+                "Update"
+              ) : (
+                "Save"
+              )}
             </button>
           </div>
         </form>

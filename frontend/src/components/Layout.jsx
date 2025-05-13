@@ -1,4 +1,4 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   HomeIcon,
@@ -11,7 +11,8 @@ import {
 
 export default function Layout() {
   const { user, logout } = useAuth();
-  if (!user) return null; // Or redirect to login
+  const redirect = useNavigate();
+  if (!user) return redirect("/login"); // Or redirect to login
 
   const navigation = [
     { name: "Dashboard", href: "/", icon: HomeIcon },
@@ -89,12 +90,6 @@ export default function Layout() {
           <div className="mt-auto">
             <div className="divider"></div>
             <ul>
-              <li>
-                <Link to="/profile" className="flex items-center">
-                  <UserIcon className="h-5 w-5" />
-                  Profile
-                </Link>
-              </li>
               <li>
                 <button onClick={logout} className="flex items-center">
                   <svg

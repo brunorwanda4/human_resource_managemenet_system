@@ -59,7 +59,7 @@ export default function DepartmentForm() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="form-control">
+          <div className="form-control flex flex-col space-y-3">
             <label className="label">
               <span className="label-text">Department Name</span>
             </label>

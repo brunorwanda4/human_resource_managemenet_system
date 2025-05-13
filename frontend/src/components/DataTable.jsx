@@ -1,59 +1,60 @@
-import { useTable, usePagination } from 'react-table';
+import { useState } from 'react';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDoubleLeftIcon, ChevronDoubleRightIcon } from '@heroicons/react/24/outline';
 
 export default function DataTable({ columns, data, className }) {
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    prepareRow,
-    page,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
-    gotoPage,
-    nextPage,
-    previousPage,
-    setPageSize,
-    state: { pageIndex, pageSize },
-  } = useTable(
-    {
-      columns,
-      data,
-      initialState: { pageIndex: 0, pageSize: 10 },
-    },
-    usePagination
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  
+  const pageCount = Math.ceil(data.length / pageSize);
+  const canPreviousPage = pageIndex > 0;
+  const canNextPage = pageIndex < pageCount - 1;
+  
+  const currentPageData = data.slice(
+    pageIndex * pageSize,
+    (pageIndex + 1) * pageSize
   );
+
+  const gotoPage = (index) => {
+    setPageIndex(index);
+  };
+
+  const nextPage = () => {
+    setPageIndex(Math.min(pageIndex + 1, pageCount - 1));
+  };
+
+  const previousPage = () => {
+    setPageIndex(Math.max(pageIndex - 1, 0));
+  };
+
+  const handlePageSizeChange = (e) => {
+    const newSize = Number(e.target.value);
+    setPageSize(newSize);
+    // Adjust pageIndex if current page would be empty
+    const newPageCount = Math.ceil(data.length / newSize);
+    setPageIndex(Math.min(pageIndex, newPageCount - 1));
+  };
 
   return (
     <div className={className}>
       <div className="overflow-x-auto">
-        <table {...getTableProps()} className="table w-full">
+        <table className="table w-full">
           <thead>
-            {headerGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()}>
-                    {column.render('Header')}
-                  </th>
+            <tr>
+              {columns.map((column, i) => (
+                <th key={i}>{column.Header}</th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {currentPageData.map((row, rowIndex) => (
+              <tr key={rowIndex}>
+                {columns.map((column, colIndex) => (
+                  <td key={colIndex}>
+                    {column.accessor ? row[column.accessor] : column.Cell?.({ value: row[column.accessor] || row })}
+                  </td>
                 ))}
               </tr>
             ))}
-          </thead>
-          <tbody {...getTableBodyProps()}>
-            {page.map(row => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()}>
-                  {row.cells.map(cell => (
-                    <td {...cell.getCellProps()}>
-                      {cell.render('Cell')}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
           </tbody>
         </table>
       </div>
@@ -63,18 +64,18 @@ export default function DataTable({ columns, data, className }) {
           <span className="text-sm">
             Page{' '}
             <strong>
-              {pageIndex + 1} of {pageOptions.length}
+              {pageIndex + 1} of {pageCount}
             </strong>
           </span>
           
           <select
             value={pageSize}
-            onChange={e => setPageSize(Number(e.target.value))}
+            onChange={handlePageSizeChange}
             className="select select-bordered select-sm"
           >
-            {[5, 10, 20, 30, 40, 50].map(pageSize => (
-              <option key={pageSize} value={pageSize}>
-                Show {pageSize}
+            {[5, 10, 20, 30, 40, 50].map(size => (
+              <option key={size} value={size}>
+                Show {size}
               </option>
             ))}
           </select>
@@ -89,14 +90,14 @@ export default function DataTable({ columns, data, className }) {
             <ChevronDoubleLeftIcon className="h-4 w-4" />
           </button>
           <button
-            onClick={() => previousPage()}
+            onClick={previousPage}
             disabled={!canPreviousPage}
             className="btn btn-sm btn-ghost"
           >
             <ChevronLeftIcon className="h-4 w-4" />
           </button>
           <button
-            onClick={() => nextPage()}
+            onClick={nextPage}
             disabled={!canNextPage}
             className="btn btn-sm btn-ghost"
           >
